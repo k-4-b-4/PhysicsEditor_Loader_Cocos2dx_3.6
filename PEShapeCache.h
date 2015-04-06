@@ -17,56 +17,47 @@ class BodyDef;
 
 class PEShapeCache : public Ref
 {
-  public:
-    bool init();
-    PEShapeCache(void);
-    ~PEShapeCache(void);
-    /**
-     * 得到实例
-     */
+//---------- クラスメソッド
+public:
+
+    // シングルトン取得
     static PEShapeCache *getInstance();
-    /**
-     *
-     * 删除实例
-     */
-    static void destroyInstance();
-    /**
-     *  通过plist 文件加载chipmunk  Shapes 到缓存中
-     *
-     *  @param plist 文件路径
-     */
+
+//---------- インスタンスメソッド
+public:
+    // plistを読み込む
     void addBodysWithFile(const std::string &plist);
-    /**
-     *  通过名字得到 PhysicsBodyˆ
-     *
-     *  @param name 图片名字
-     *
-     *  @return 刚体
-     */
+    
+    // キー経由でPhysicsBodyを取得
     PhysicsBody *getPhysicsBodyByName(const std::string name);
-    /**
-     *  根据文件名移除刚体
-     *
-     *  @param plist 文件路径
-     *
-     *  @return 是否移除完成
-     */
+    
+    // 読み込んだplistを破棄
     bool removeBodysWithFile(const std::string &plist);
-    /**
-     *  移除所有刚体
-     *
-     *  @return 是否移除
-     */
+
+    // 剛体情報を削除
     bool removeAllBodys();
     /**
      *  重置缓存
      */
     void reset();
 
-  private:
+private:
     bool safeReleaseBodyDef(BodyDef* bodyDef);
+
+//---------- BodyDefを取得しておく場所
 private:
     Map<std::string,BodyDef*> bodyDefs;
+    
+//----------演算子系
+public:
+    // コピーと代入を禁止する
+    PEShapeCache(const PEShapeCache&) = delete;
+    PEShapeCache(const PEShapeCache&&) = delete;
+    PEShapeCache&& operator= (const PEShapeCache&) = delete;
+    PEShapeCache&& operator= (const PEShapeCache&&) = delete;
+private:
+    PEShapeCache(); // コンストラクタ
+    ~PEShapeCache();// デストラクタ
 };
 typedef enum
 {
@@ -76,9 +67,9 @@ typedef enum
 class Polygon : public Ref
 {
   public:
-    Point* vertices; //顶点数组
-    int numVertices;      //顶点数
-    float area;           //面积
+    Point* vertices;      //ポリゴン
+    int numVertices;      //ポリゴン数
+    float area;           //面積
     float mass;           //质量
     float momentum;       //扭力
 };
@@ -89,7 +80,7 @@ class FixtureData : public Ref
     float mass;             //质量；
     float elasticity;       //弹力
     float friction;         //摩擦力
-    Point surfaceVelocity; //初速度
+    Point surfaceVelocity;  //初速度
     int collisionType;      //分类
     int group;              //组
     int layers;             //在的层

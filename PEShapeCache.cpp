@@ -5,7 +5,6 @@
 
 using namespace cocos2d;
 
-static PEShapeCache *_instance = nullptr;
 static float area(Point *vertices, int numVertices)
 {
     float area = 0.0f;
@@ -18,32 +17,27 @@ static float area(Point *vertices, int numVertices)
     area *= .5f;
     return area;
 }
-PEShapeCache::PEShapeCache()
-{
-}
-bool PEShapeCache::init()
-{
-    return true;
-}
+
+PEShapeCache::PEShapeCache():bodyDefs(){CCLOG("%s::%s", typeid(*this).name(), __FUNCTION__);}
+
+// デストラクタ
 PEShapeCache::~PEShapeCache()
 {
+    CCLOG("%s::%s", typeid(*this).name(), __FUNCTION__);
     removeAllBodys();
 }
+
+// シングルトンを返す
 PEShapeCache *PEShapeCache::getInstance()
 {
-    if (!_instance)
-    {
-        _instance = new PEShapeCache();
-        _instance->init();
-    }
-    return _instance;
+    static PEShapeCache manager;
+    return &manager;
 }
-void PEShapeCache::destroyInstance()
-{
-    CC_SAFE_RELEASE_NULL(_instance);
-}
+
 void PEShapeCache::addBodysWithFile(const std::string &plist)
 {
+    CCLOG("%s::%s", typeid(*this).name(), __FUNCTION__);
+
     ValueMap dict = FileUtils::getInstance()->getValueMapFromFile(plist);
     CCASSERT(!dict.empty(), "Shape-file not found");
     CCASSERT(dict.size() != 0, "plist file empty or not existing");
@@ -147,6 +141,8 @@ void PEShapeCache::addBodysWithFile(const std::string &plist)
 }
 PhysicsBody *PEShapeCache::getPhysicsBodyByName(const std::string name)
 {
+    CCLOG("%s::%s", typeid(*this).name(), __FUNCTION__);
+
     BodyDef *bd = bodyDefs.at(name);
     CCASSERT(bd != nullptr, "Body not found");
     PhysicsBody *body = PhysicsBody::create(bd->mass, bd->momentum);
@@ -175,6 +171,8 @@ PhysicsBody *PEShapeCache::getPhysicsBodyByName(const std::string name)
 }
 bool PEShapeCache::removeBodysWithFile(const std::string &plist)
 {
+    CCLOG("%s::%s", typeid(*this).name(), __FUNCTION__);
+
     ValueMap dict = FileUtils::getInstance()->getValueMapFromFile(plist);
     CCASSERT(!dict.empty(), "Shape-file not found");
     CCASSERT(dict.size() != 0, "plist file empty or not existing");
@@ -197,6 +195,8 @@ bool PEShapeCache::removeBodysWithFile(const std::string &plist)
 }
 bool PEShapeCache::removeAllBodys()
 {
+    CCLOG("%s::%s", typeid(*this).name(), __FUNCTION__);
+
     CCLOG("%s"," PEShapeCache removeAllbodys");
     for (auto iter = bodyDefs.cbegin(); iter != bodyDefs.cend(); ++iter)
     {
@@ -207,10 +207,14 @@ bool PEShapeCache::removeAllBodys()
 }
 void PEShapeCache::reset()
 {
+    CCLOG("%s::%s", typeid(*this).name(), __FUNCTION__);
+
     removeAllBodys();
 }
 bool PEShapeCache::safeReleaseBodyDef(BodyDef *bodyDef)
 {
+    CCLOG("%s::%s", typeid(*this).name(), __FUNCTION__);
+
     for (auto fixturedate : bodyDef->fixtures)
     {
         for (auto polygon : fixturedate->polygons)
