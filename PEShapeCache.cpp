@@ -146,7 +146,6 @@ PhysicsBody *PEShapeCache::getPhysicsBodyByName(const std::string name)
     BodyDef *bd = bodyDefs.at(name);
     CCASSERT(bd != nullptr, "Body not found");
     PhysicsBody *body = PhysicsBody::create(bd->mass, bd->momentum);
-    body->setPositionOffset(bd->anchorPoint);
     for (auto fd : bd->fixtures)
     {
         if (fd->fixtureType == SHAPE_CIRCLE)
